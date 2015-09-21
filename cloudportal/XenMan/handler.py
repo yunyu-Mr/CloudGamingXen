@@ -1,32 +1,48 @@
 # Handler
-
+import json
 import XenAPI
 from vm_info import get_vm_info, connectXen
 
-def start(args):
-    print "starting game %s" % args[0]
-    return 'start game'
+def start(request):
+    print "start request"
+    print request
+    ip_addr = "172.18.216.221"
+    return json.dumps({'result':0, 'ip_addr':ip_addr})
 
-def  login(args):
+def  login(request):
+    print "login request"
     session = connectXen()
     info = get_vm_info(session)
     for item in info:
         print item
-    return 'validate'
+    for item in info:
+        print item['name_label'], item['ip_addr']
+    return json.dumps({'result':0})
 
-def exit(args):
+def exit(request):
     return 'exit'
 
-def default(args):
+def default(request):
     return 'No such command'
 
 def handler(data):
-    args = data.split(' ')
-    if (len(args) >= 2):
+    # args = data.split(' ')
+    print data
+    if (data != ''):
+        try:
+            request = json.loads(data)
+        except Exception, e:
+            raise e
+        else:
+            pass
+        # print request
+        action = request['action']
+        # Get handle function name
         func = {
             'start':start,
             'login':login,
             'exit':exit
-        }.get(args[0], default) 
-        return func(args[1:])
+        }.get(action, default) 
+        # Return handler
+        return func(request)
     return 'Args not enough'

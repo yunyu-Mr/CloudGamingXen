@@ -1,9 +1,10 @@
 
 import socket
+import json
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 # set up connect
-s.connect(('127.0.0.1', 9999))
+s.connect(('172.18.219.135', 9999))
 # receive welcome messages
 print(s.recv(1024))
 # for data in ['Michael', 'Tracy', 'Sarah']:
@@ -12,8 +13,25 @@ print(s.recv(1024))
 #     print(s.recv(1024))
 while True:
     x = raw_input(">>")
+    if x == 'login':
+        req = json.dumps(
+            {
+                'action':'login',
+                'username':'root',
+                'password':'netlab'
+            })
+    elif x == 'start':
+        req = json.dumps(
+            {
+                'action':'start',
+                'game_name':'batman',
+                'game_server':'172.18.216.221',
+                'vm_type':'high'
+            })
+    elif x == 'what':
+        req = 'what what ????'
     if x != 'exit':
-        s.send(x)
+        s.send(req)
         print s.recv(1024)
     else:
         break

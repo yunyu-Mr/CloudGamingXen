@@ -1,4 +1,14 @@
-# server
+# Portal Server
+#
+# It's a portal of cloud gaming.
+# Cliet first visit portal server to obtain gaming server's address, 
+# then connect gaming server.
+#
+# In addition, portal server is a schedulor of gaming VMs.
+# It'll start up VMs when VMs are not enough and shutdown some when they are too many.
+#
+# Author: Saoming
+# 
 
 import socket
 import time, threading
@@ -14,18 +24,25 @@ def tcplink(sock, addr):
         if not data or data == 'exit':
             break
         res = handler(data)
+        print 'respond:', res
+
         sock.send(res)
     sock.close()
     print('Connection from %s:%s closed.' % addr)
 
 
+# Constants define
+IP_ADDR = "172.18.219.135"
+PORT = 9999
+MAX_LISTEN_NUM = 5
+
 # create socket
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 # bind listen port
-s.bind(('127.0.0.1', 9999))
+s.bind((IP_ADDR, PORT))
 
-s.listen(5)
+s.listen(MAX_LISTEN_NUM)
 print('Waiting for connection...')
 
 while True:
@@ -34,4 +51,3 @@ while True:
     # create new thread to handle this connection
     t = threading.Thread(target=tcplink, args=(sock, addr))
     t.start()
-
