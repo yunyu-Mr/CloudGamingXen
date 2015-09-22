@@ -1,7 +1,12 @@
 # Handler
 import json
 import XenAPI
+import time, threading
+
 from vm_info import get_vm_info, connectXen
+from db import settings, table
+
+lock_table = threading.Lock()
 
 def start(request):
     print "start request"
@@ -22,6 +27,9 @@ def  login(request):
 def exit(request):
     return 'exit'
 
+def vmstatus(request):
+    pass
+
 def default(request):
     return 'No such command'
 
@@ -41,8 +49,18 @@ def handler(data):
         func = {
             'start':start,
             'login':login,
+            'vmstatus':vmstatus,
             'exit':exit
         }.get(action, default) 
         # Return handler
         return func(request)
     return 'Args not enough'
+
+def update_table():
+    with lock_table:
+        # modify table
+        table.insert_lod(settings.lod, {"name":"saoming"})
+    print table.query_lod(settings.lod)
+
+if __name__ == '__main__':
+    table.init()

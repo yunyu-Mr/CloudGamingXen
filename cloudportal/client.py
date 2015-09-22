@@ -4,7 +4,7 @@ import json
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 # set up connect
-s.connect(('172.18.219.135', 9999))
+s.connect(('172.18.219.48', 9999))
 # receive welcome messages
 print(s.recv(1024))
 # for data in ['Michael', 'Tracy', 'Sarah']:
@@ -25,7 +25,6 @@ while True:
             {
                 'action':'start',
                 'game_name':'batman',
-                'game_server':'172.18.216.221',
                 'vm_type':'high'
             })
     elif x == 'what':

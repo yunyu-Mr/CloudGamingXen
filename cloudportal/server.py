@@ -13,7 +13,8 @@
 import socket
 import time, threading
 
-from XenMan.handler import handler
+from XenMan import handler
+from db import settings, table
 
 def tcplink(sock, addr):
     print('Accept new connection from %s:%s...' % addr)
@@ -23,8 +24,10 @@ def tcplink(sock, addr):
         time.sleep(1)
         if not data or data == 'exit':
             break
-        res = handler(data)
+        res = handler.handler(data)
         print 'respond:', res
+
+        handler.update_table()
 
         sock.send(res)
     sock.close()
@@ -32,9 +35,12 @@ def tcplink(sock, addr):
 
 
 # Constants define
-IP_ADDR = "172.18.219.135"
+IP_ADDR = "172.18.219.48"
 PORT = 9999
 MAX_LISTEN_NUM = 5
+
+# set db table global
+settings.init()
 
 # create socket
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
