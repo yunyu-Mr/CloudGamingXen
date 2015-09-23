@@ -1,7 +1,7 @@
 
 import socket
 import json
-
+        
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 # set up connect
 s.connect(('172.18.219.48', 9999))
