@@ -10,6 +10,7 @@ import datetime
 import thread
 import time
 import ConfigParser
+import operator
 
 urls = (
     '/getvm', 'getvm',
@@ -112,6 +113,32 @@ class getvm:
             thread.start_new_thread(createvm, (db, session))
 
         return json.dumps(ip)
+
+    def servers_list(self):
+        db = MySQLdb.connect("localhost", "root", "netlab513", "CloudGaming")
+        cursor = db.cursor()
+        sql = '''SELECT server, COUNT(server) FROM CloudGaming_cluster.inuse_vms
+                GROUP BY server
+                ORDER BY COUNT(server);'''
+
+        # Get configuration, available servers list:
+        config = ConfigParser.ConfigParser()
+        config.read("../conf/server.conf")
+        servers = dict()
+        for key, server in config.items("servers"):
+            servers[server] = 0
+        print servers
+
+        # Check servers using situations:
+        try:
+            cursor.execute(sql)
+            results = cursor.fetchall()
+            for server, cnt in results:
+                servers[server] = cnt
+            sorted_servers = sorted(servers.items(), key=operator.itemgetter(1))
+            return sorted_servers
+        except Exception, e:
+            print e
 
 
 class exitgame:
